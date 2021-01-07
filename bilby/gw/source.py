@@ -322,6 +322,68 @@ def lal_binary_black_hole_tidal_heating(
         a_1=a_1, a_2=a_2, tilt_1=tilt_1, tilt_2=tilt_2, phi_12=phi_12, H_eff5 = H_eff5, Q_tilde = Q_tilde,
         phi_jl=phi_jl, **waveform_kwargs)
 
+#model for scenario1 (no heff parameters)
+#---------------------------------------------
+def lal_binary_black_hole_tidal_heating_no_param(
+        frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
+        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, Q_tilde, **kwargs):
+
+    """ Phase correction to the horizon parameters are added to a Binary Black Hole waveform model using lalsimulation
+
+    Parameters
+    ----------
+    frequency_array: array_like
+    The frequencies at which we want to calculate the strain
+    mass_1: float
+    The mass of the heavier object in solar masses
+    mass_2: float
+    The mass of the lighter object in solar masses
+    luminosity_distance: float
+    The luminosity distance in megaparsec
+    a_1: float
+    Dimensionless primary spin magnitude
+    tilt_1: float
+    Primary tilt angle
+    phi_12: float
+    Azimuthal angle between the two component spins
+    a_2: float
+    Dimensionless secondary spin magnitude
+    tilt_2: float
+    Secondary tilt angle
+    phi_jl: float
+    Azimuthal angle between the total binary angular momentum and the
+    orbital angular momentum
+    theta_jn: float
+    Angle between the total binary angular momentum and the line of sight
+    phase: float
+    The phase at coalescence
+    H_eff5: float
+    2.5 PN order horizon parameter
+    H_eff8: float
+    4 PN order horizon parameter
+    kwargs: dict
+    Optional keyword arguments
+
+    Returns
+    -------
+    dict: A dictionary with the plus and cross polarisation strain modes
+    """
+    waveform_kwargs = dict(
+        waveform_approximant='HeatedTaylorF2_no_param', reference_frequency=50.0,
+        minimum_frequency=20.0, maximum_frequency=frequency_array[-1],
+        catch_waveform_errors=False, pn_spin_order=-1, pn_tidal_order=-1,
+        pn_phase_order=-1, pn_amplitude_order=0)
+    waveform_kwargs.update(kwargs)
+    approx = waveform_kwargs['waveform_approximant']
+    if approx == 'TaylorF2' or approx == 'HeatedTaylorF2_no_param':
+        f_isco = ISCO(mass_1, mass_2)
+        waveform_kwargs.update(maximum_frequency=f_isco)
+    return _base_lal_cbc_fd_waveform(
+        frequency_array=frequency_array, mass_1=mass_1, mass_2=mass_2,
+        luminosity_distance=luminosity_distance, theta_jn=theta_jn, phase=phase,
+        a_1=a_1, a_2=a_2, tilt_1=tilt_1, tilt_2=tilt_2, phi_12=phi_12, Q_tilde = Q_tilde,
+        phi_jl=phi_jl, **waveform_kwargs)
+#-------------------------------------------------------------------------------------------
 
 def lal_binary_neutron_star(
         frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
@@ -734,6 +796,21 @@ def _base_lal_cbc_fd_waveform(
             expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
             hplus.data.data[:] = hplus.data.data * expo_heated_phase[:hplus.data.length]
             hcross.data.data[:] = hcross.data.data * expo_heated_phase[:hplus.data.length] 
+
+        elif waveform_kwargs['waveform_approximant'] == "HeatedTaylorF2_no_param":
+            hplus, hcross = wf_func(
+                mass_1, mass_2, spin_1x, spin_1y, spin_1z, spin_2x, spin_2y,
+                spin_2z, luminosity_distance, iota, phase,
+                longitude_ascending_nodes, eccentricity, mean_per_ano, delta_frequency,
+                start_frequency, maximum_frequency, reference_frequency,
+                waveform_dictionary, approximant)
+            
+            heated_phase = phase_TH_BBH_no_param(
+                frequency_array, mass_1, mass_2, a_1, a_2, spin_1x, spin_1y, spin_1z,
+                spin_2x, spin_2y, spin_2z, start_frequency, Q_tilde, delta_frequency)
+            expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
+            hplus.data.data[:] = hplus.data.data * expo_heated_phase[:hplus.data.length]
+            hcross.data.data[:] = hcross.data.data * expo_heated_phase[:hplus.data.length]
 
         
         elif waveform_kwargs['waveform_approximant'] == "HeatedTidalTaylorF2":
