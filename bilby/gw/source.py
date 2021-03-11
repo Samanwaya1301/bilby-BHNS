@@ -137,7 +137,7 @@ def phase_TH_BBH_no_param(
 
 def phase_TH_secondary(
         frequency_array, mass_1, mass_2, a_1, a_2, spin_1x, spin_1y, spin_1z,
-        spin_2x, spin_2y, spin_2z, start_frequency, H_eff5, delta_frequency):
+        spin_2x, spin_2y, spin_2z, H_eff5, start_frequency, delta_frequency):
     """ Phase correction due to tidal heating
         Added spin-orbit interaction term and corrected positive-negative sign
     """
@@ -793,7 +793,7 @@ def _base_lal_cbc_fd_waveform(
                 spin_2x, spin_2y, spin_2z, Q_tilde, start_frequency, delta_frequency)
             heated_phase_secondary = phase_TH_secondary(
                 frequency_array, mass_1, mass_2, a_1, a_2, spin_1x, spin_1y, spin_1z,
-                spin_2x, spin_2y, spin_2z, start_frequency, H_eff5, delta_frequency)
+                spin_2x, spin_2y, spin_2z, H_eff5, start_frequency, delta_frequency)
             heated_phase = heated_phase_primary + heated_phase_secondary
             expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
             hplus.data.data[:] = hplus.data.data * expo_heated_phase[:hplus.data.length]
@@ -809,7 +809,7 @@ def _base_lal_cbc_fd_waveform(
             
             heated_phase = phase_TH_BBH_no_param(
                 frequency_array, mass_1, mass_2, a_1, a_2, spin_1x, spin_1y, spin_1z,
-                spin_2x, spin_2y, spin_2z, start_frequency, Q_tilde, delta_frequency)
+                spin_2x, spin_2y, spin_2z, Q_tilde, start_frequency, delta_frequency)
             expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
             hplus.data.data[:] = hplus.data.data * expo_heated_phase[:hplus.data.length]
             hcross.data.data[:] = hcross.data.data * expo_heated_phase[:hplus.data.length]
