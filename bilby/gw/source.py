@@ -713,7 +713,7 @@ def _base_lal_cbc_fd_waveform(
     -------
     dict: A dictionary with the plus and cross polarisation strain modes
     """
-    if waveform_kwargs['waveform_approximant'] == "HeatedTaylorF2" or waveform_kwargs['waveform_approximant'] == "HeatedTidalTaylorF2":
+    if waveform_kwargs['waveform_approximant'] == "HeatedTaylorF2" or waveform_kwargs['waveform_approximant'] == "HeatedTidalTaylorF2" or waveform_kwargs['waveform_approximant'] == "HeatedTaylorF2_no_param":
         waveform_approximant = "TaylorF2"
     else:
         waveform_approximant = waveform_kwargs['waveform_approximant']
