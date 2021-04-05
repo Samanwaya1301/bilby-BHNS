@@ -173,7 +173,25 @@ def phase_TH_secondary(
     delta_phase = phase_term1 * (term_v5 + term_v7 + term_v8)
     delta_phase = np.concatenate((np.zeros(minIndx), delta_phase))
     return delta_phase
-
+  
+#Phase due to tidal deformability (https://journals.aps.org/prd/abstract/10.1103/PhysRevD.89.103012)
+#------------------------------------------------------------------------------------------------------
+def phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, start_frequency, delta_frequency):
+    minIndx = int(start_frequency / delta_frequency)
+    frequency_array_effective = frequency_array[minIndx:]
+    v = np.cbrt(lal.PI * lal.G_SI * m * frequency_array_effective) / lal.C_SI
+    m = mass_1 + mass_2
+    eta = (mass_1 * mass_2)/m**2
+    delta = np.sqrt(1 - 4 * eta)
+    
+    lam_t = 8./13. * ( (1. + 7. * eta - 31. * eta**2) * (lambda_1 + lambda_2) +
+                       delta * (1. + 9. * eta - 11. * eta**2) * (lambda_1 - lambda_2) )
+    delta_lam_t = 0.5 * ( delta * (1319. - 13272. * eta + 8944. * eta**2) / 1319. * (lambda_1 + lam2)+
+                       (1319. - 15910. * eta + 32850. * eta**2 + 3380. * eta**3) / 1319. * (lambda_1 - lambda_2) )
+    
+    tidal_def_phase = (3./128./eta/v**5.)*(-39.*lam_t*v**10/2. + (-3115.*lam_t/64. + 6595.*(1-4*eta)**0.5*delta_lam_t/364.)*v**12)
+    tidal_def_phase = np.concatenate((np.zeros(minIndx), tidal_def_phase))
+    return tidal_def_phase
 
 def ISCO(m1, m2):
     "masses in solar mass unit"
