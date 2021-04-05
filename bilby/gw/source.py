@@ -186,7 +186,7 @@ def phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, start_frequenc
     
     lam_t = 8./13. * ( (1. + 7. * eta - 31. * eta**2) * (lambda_1 + lambda_2) +
                        delta * (1. + 9. * eta - 11. * eta**2) * (lambda_1 - lambda_2) )
-    delta_lam_t = 0.5 * ( delta * (1319. - 13272. * eta + 8944. * eta**2) / 1319. * (lambda_1 + lam2)+
+    delta_lam_t = 0.5 * ( delta * (1319. - 13272. * eta + 8944. * eta**2) / 1319. * (lambda_1 + lambda_2)+
                        (1319. - 15910. * eta + 32850. * eta**2 + 3380. * eta**3) / 1319. * (lambda_1 - lambda_2) )
     
     tidal_def_phase = (3./128./eta/v**5.)*(-39.*lam_t*v**10/2. + (-3115.*lam_t/64. + 6595.*(1-4*eta)**0.5*delta_lam_t/364.)*v**12)
