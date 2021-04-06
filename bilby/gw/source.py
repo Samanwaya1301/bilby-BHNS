@@ -616,7 +616,7 @@ def lal_black_hole_neutron_star_tidal_heating(
         frequency_array=frequency_array, mass_1=mass_1, mass_2=mass_2,
         luminosity_distance=luminosity_distance, theta_jn=theta_jn, phase=phase,
         a_1=a_1, a_2=a_2, tilt_1=tilt_1, tilt_2=tilt_2, phi_12=phi_12,
-        phi_jl=phi_jl, lambda_1=0, lambda_2=lambda_2, Q_tilde = Q_tilde, **waveform_kwargs)
+        phi_jl=phi_jl, lambda_2=lambda_2, Q_tilde = Q_tilde, **waveform_kwargs)
 #--------------------------------------------------------------------------------------
 
 def lal_eccentric_binary_black_hole_no_spins(
@@ -845,6 +845,9 @@ def _base_lal_cbc_fd_waveform(
                 spin_2x, spin_2y, spin_2z, start_frequency, Q_tilde, delta_frequency)
             heated_phase_secondary = 0
             heated_phase = heated_phase_primary + heated_phase_secondary
+            tidal_def_phase_secondary = phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, 
+                                                 start_frequency, delta_frequency)
+            heated_phase += tidal_def_phase_secondary
             expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
             hplus.data.data[:] = hplus.data.data * expo_heated_phase[:hplus.data.length]
             hcross.data.data[:] = hcross.data.data * expo_heated_phase[:hplus.data.length]
