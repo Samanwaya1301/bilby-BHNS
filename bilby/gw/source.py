@@ -176,7 +176,7 @@ def phase_TH_secondary(
   
 #Phase due to tidal deformability (https://journals.aps.org/prd/abstract/10.1103/PhysRevD.89.103012)
 #------------------------------------------------------------------------------------------------------
-def phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, start_frequency, delta_frequency):
+def phase_TD(frequency_array, mass_1, mass_2, lam_1, lam_2, start_frequency, delta_frequency):
     minIndx = int(start_frequency / delta_frequency)
     frequency_array_effective = frequency_array[minIndx:]
     v = np.cbrt(lal.PI * lal.G_SI * m * frequency_array_effective) / lal.C_SI
@@ -184,10 +184,10 @@ def phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, start_frequenc
     eta = (mass_1 * mass_2)/m**2
     delta = np.sqrt(1 - 4 * eta)
     
-    lam_t = 8./13. * ( (1. + 7. * eta - 31. * eta**2) * (lambda_1 + lambda_2) +
-                       delta * (1. + 9. * eta - 11. * eta**2) * (lambda_1 - lambda_2) )
-    delta_lam_t = 0.5 * ( delta * (1319. - 13272. * eta + 8944. * eta**2) / 1319. * (lambda_1 + lambda_2)+
-                       (1319. - 15910. * eta + 32850. * eta**2 + 3380. * eta**3) / 1319. * (lambda_1 - lambda_2) )
+    lam_t = 8./13. * ( (1. + 7. * eta - 31. * eta**2) * (lam_1 + lam_2) +
+                       delta * (1. + 9. * eta - 11. * eta**2) * (lam_1 - lam_2) )
+    delta_lam_t = 0.5 * ( delta * (1319. - 13272. * eta + 8944. * eta**2) / 1319. * (lam_1 + lam_2)+
+                       (1319. - 15910. * eta + 32850. * eta**2 + 3380. * eta**3) / 1319. * (lam_1 - lam_2) )
     
     tidal_def_phase = (3./128./eta/v**5.)*(-39.*lam_t*v**10/2. + (-3115.*lam_t/64. + 6595.*(1-4*eta)**0.5*delta_lam_t/364.)*v**12)
     tidal_def_phase = np.concatenate((np.zeros(minIndx), tidal_def_phase))
@@ -556,7 +556,7 @@ def lal_binary_neutron_star_tidal_heating(
 #-----------------------------------------------------------------------------------
 def lal_black_hole_neutron_star_tidal_heating(
         frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
-        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, lambda_1, lambda_2, Q_tilde,
+        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, lam_1, lam_2, Q_tilde,
         **kwargs):
     """ Phase correction to the horizon parameters and tidal corrections
     are added to a CBC waveform model using lalsimulation
@@ -616,7 +616,7 @@ def lal_black_hole_neutron_star_tidal_heating(
         frequency_array=frequency_array, mass_1=mass_1, mass_2=mass_2,
         luminosity_distance=luminosity_distance, theta_jn=theta_jn, phase=phase,
         a_1=a_1, a_2=a_2, tilt_1=tilt_1, tilt_2=tilt_2, phi_12=phi_12,
-        phi_jl=phi_jl, lambda_2=lambda_2, Q_tilde = Q_tilde, **waveform_kwargs)
+        phi_jl=phi_jl, lam_1=lam_1, lam_2=lam_2, Q_tilde = Q_tilde, **waveform_kwargs)
 #--------------------------------------------------------------------------------------
 
 def lal_eccentric_binary_black_hole_no_spins(
@@ -688,7 +688,7 @@ def lal_eccentric_binary_black_hole_no_spins(
 def _base_lal_cbc_fd_waveform(
         frequency_array, mass_1, mass_2, luminosity_distance, theta_jn, phase,
         a_1=0.0, a_2=0.0, tilt_1=0.0, tilt_2=0.0, phi_12=0.0, phi_jl=0.0,
-        lambda_1=0.0, lambda_2=0.0, eccentricity=0.0, H_eff5=0, Q_tilde=0,
+        lambda_1=0.0, lambda_2=0.0, eccentricity=0.0, H_eff5=0.0, lam_1=0.0, lam_2=0.0, Q_tilde=0.0,
         **waveform_kwargs):
     """ Generate a cbc waveform model using lalsimulation
 
@@ -845,7 +845,7 @@ def _base_lal_cbc_fd_waveform(
                 spin_2x, spin_2y, spin_2z, start_frequency, Q_tilde, delta_frequency)
             heated_phase_secondary = 0
             heated_phase = heated_phase_primary + heated_phase_secondary
-            tidal_def_phase_secondary = phase_TD(frequency_array, mass_1, mass_2, lambda_1, lambda_2, 
+            tidal_def_phase_secondary = phase_TD(frequency_array, mass_1, mass_2, lam_1, lam_2, 
                                                  start_frequency, delta_frequency)
             heated_phase += tidal_def_phase_secondary
             expo_heated_phase = (np.cos(heated_phase) - 1j * np.sin(heated_phase))
