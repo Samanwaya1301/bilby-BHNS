@@ -587,9 +587,9 @@ def lal_black_hole_neutron_star_tidal_heating(
     Angle between the total binary angular momentum and the line of sight
     phase: float
     The phase at coalescence
-    lambda_1: float
+    lam_1: float
     Dimensional tidal deformalibilty of mass_1(black hole- zero in this case)
-    lambda_2 : float
+    lam_2 : float
     Dimensional tidal deformability of mass_2(neutron star))
     H_eff5: float (deprecated)
     2.5 PN order horizon parameter
