@@ -174,7 +174,7 @@ def phase_TH_secondary(
     delta_phase = np.concatenate((np.zeros(minIndx), delta_phase))
     return delta_phase
   
-#Phase due to tidal deformability (https://journals.aps.org/prd/abstract/10.1103/PhysRevD.89.103012)
+#Phase due to tidal deformability (https://journals.aps.org/prd/abstract/10.1103/PhysRevD.89.103012  ;   eqns (4),(5),(6))
 #------------------------------------------------------------------------------------------------------
 def phase_TD(frequency_array, mass_1, mass_2, lam_1, lam_2, start_frequency, delta_frequency):
     minIndx = int(start_frequency / delta_frequency)
